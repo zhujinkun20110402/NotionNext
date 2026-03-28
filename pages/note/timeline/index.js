@@ -1,0 +1,72 @@
+import BLOG from '@/blog.config'
+import { siteConfig } from '@/lib/config'
+import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import { isBrowser } from '@/lib/utils'
+import { formatDateFmt } from '@/lib/utils/formatDate'
+import { DynamicLayout } from '@/themes/theme'
+import { useEffect } from 'react'
+
+/**
+ * 琐记时间线首页
+ * @param {*} props
+ * @returns
+ */
+const NoteTimelineIndex = props => {
+  useEffect(() => {
+    if (isBrowser) {
+      const anchor = window.location.hash
+      if (anchor) {
+        setTimeout(() => {
+          const anchorElement = document.getElementById(anchor.substring(1))
+          if (anchorElement) {
+            anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' })
+          }
+        }, 300)
+      }
+    }
+  }, [])
+
+  const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
+  return <DynamicLayout theme={theme} layoutName='LayoutNoteTimeline' {...props} />
+}
+
+export async function getStaticProps({ locale }) {
+  const props = await fetchGlobalAllData({ from: 'note-timeline-index', locale })
+  // 处理分页，过滤Note类型的文章
+  props.posts = props.allPages?.filter(
+    page => page.type === 'Note' && page.status === 'Published'
+  )
+  delete props.allPages
+
+  const postsSortByDate = Object.create(props.posts)
+
+  postsSortByDate.sort((a, b) => {
+    return b?.publishDate - a?.publishDate
+  })
+
+  const notePosts = {}
+
+  postsSortByDate.forEach(post => {
+    const date = formatDateFmt(post.publishDate, 'yyyy-MM-dd')
+    if (notePosts[date]) {
+      notePosts[date].push(post)
+    } else {
+      notePosts[date] = [post]
+    }
+  })
+
+  props.notePosts = notePosts
+
+  return {
+    props,
+    revalidate: process.env.EXPORT
+      ? undefined
+      : siteConfig(
+          'NEXT_REVALIDATE_SECOND',
+          BLOG.NEXT_REVALIDATE_SECOND,
+          props.NOTION_CONFIG
+        )
+  }
+}
+
+export default NoteTimelineIndex
