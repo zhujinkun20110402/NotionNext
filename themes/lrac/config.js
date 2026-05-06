@@ -1,0 +1,12 @@
+const CONFIG = {
+  LRAC_MENU_CATEGORY: true,
+  LRAC_MENU_TAG: true,
+  LRAC_MENU_ARCHIVE: true,
+  LRAC_MENU_SEARCH: true,
+  LRAC_MENU_DARKMODE_BUTTON: true,
+  LRAC_POST_LIST_COVER: true,
+  LRAC_TITLE_IMAGE: true,
+  LRAC_POST_LIST_STYLE: 'page'
+}
+
+export default CONFIG

@@ -91,6 +91,10 @@ export const THEME_SWITCH_MANIFEST = {
     name: 'Game',
     summary: '偏游戏与像素元素装饰。'
   },
+  lrac: {
+    name: 'L-Rac',
+    summary: '小浣熊风格，红熊猫玻璃质感与高级模糊效果。'
+  },
   example: {
     name: 'Example',
     summary: '示例与演示向默认骨架。'
